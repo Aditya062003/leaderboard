@@ -23,6 +23,7 @@ djangorestframework==3.12.4
 filelock==3.8.0
 identify==2.5.5
 idna==3.4
+Jinja2==3.1.2
 kombu==5.2.4
 knox==0.1.14
 nodeenv==1.7.0
