@@ -31,7 +31,7 @@ SECRET_KEY = (
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['*']
 
 # import dotenv,os
 import os
@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
+    'celery',
+    'flower',
     "rest_framework",
     "knox",
     "rest_framework.authtoken",
@@ -164,7 +166,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': '4xAma06Fi5kwv7YN',
+        # 'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'PASSWORD':'4xAma06Fi5kwv7YN',
         'HOST': 'db.rpdttenqphkdyvpuoeky.supabase.co',
         'PORT': '5432',
     }
@@ -240,4 +243,10 @@ CELERY_BEAT_SCHEDULE = {
         "task": "leaderboard.celery.openlake_contributor__update",
         "schedule": crontab(minute=f"*/{OL_INTV}"),
     },
+    # Run the `tasks.add` task every minute.
+    'add': {
+        'task': 'tasks.add',
+        'schedule': crontab(minute='*'),
+    },
+
 }
