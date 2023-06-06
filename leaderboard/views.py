@@ -288,8 +288,8 @@ def get_ranking(contest, usernames):
                 break
             resp = requests.get(url).json()
             page_rank = resp['total_rank']
-            if len(page_rank) == 0:
-                break
+#             if len(page_rank) == 0:
+#                 break
             total_rank.extend(page_rank)
             print(f'Retrieved ranking from page {page}. {len(total_rank)} retrieved.')
             page += 1
