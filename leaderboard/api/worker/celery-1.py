@@ -1,6 +1,6 @@
 from celery import Celery
 
-app = Celery('celery-1', broker=celery_broker_url, backend=celery_result_backend)
+app = Celery('celery-1', broker='redis-18982.c80.us-east-1-2.ec2.cloud.redislabs.com:18982', backend='redis-18982.c80.us-east-1-2.ec2.cloud.redislabs.com:18982')
 
 @app.task
 def celery_1_task():
