@@ -16,10 +16,6 @@
       "dest": "api/worker/celery-1.py"
     },
     {
-      "src": "/api/worker/celery-2",
-      "dest": "api/worker/celery-2.py"
-    },
-    {
       "src": "/(.*)",
       "dest": "leaderboard/wsgi.py"
     }
@@ -34,10 +30,5 @@
       "memory": 512,
       "maxDuration": 60
     },
-    "api/worker/celery-2.py": {
-      "runtime": "python3.9",
-      "memory": 512,
-      "maxDuration": 60
-    }
   }
 }
