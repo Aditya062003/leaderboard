@@ -292,6 +292,7 @@ def get_ranking(contest, usernames):
                 break
             total_rank.extend(page_rank)
             print(f'Retrieved ranking from page {page}. {len(total_rank)} retrieved.')
+            logger.info(f'Retrieved ranking from page {page}. {len(total_rank)} retrieved.')
             page += 1
             retry_cnt = 0
         except:
