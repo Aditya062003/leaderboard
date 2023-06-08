@@ -4,7 +4,7 @@
     {
       "src": "leaderboard/wsgi.py",
       "use": "@vercel/python"
-    },
+    }
   ],
   "routes": [
     {
@@ -15,5 +15,5 @@
   "env": {
     "CELERY_BROKER_URL": "redis-18982.c80.us-east-1-2.ec2.cloud.redislabs.com:18982",
     "CELERY_RESULT_BACKEND": "redis-18982.c80.us-east-1-2.ec2.cloud.redislabs.com:18982"
-  },
+  }
 }
