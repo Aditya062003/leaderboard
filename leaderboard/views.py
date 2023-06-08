@@ -284,7 +284,7 @@ def get_ranking(contest, usernames):
         try:
             logger.info(API_URL_FMT.format(contest, page))
             url = API_URL_FMT.format(contest, page)
-            if page == 10 :
+            if page == 100 :
                 break
             resp = requests.get(url).json()
             page_rank = resp['total_rank']
