@@ -5,4 +5,5 @@ app = Celery('celery-1', broker='redis-18982.c80.us-east-1-2.ec2.cloud.redislabs
 @app.task
 def celery_1_task():
     celery -A leaderboard worker --loglevel=info
+    celery -A leaderboard beat -l info
     pass
