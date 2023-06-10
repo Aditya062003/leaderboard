@@ -4,7 +4,8 @@ from leaderboard.models import (
     githubUser,
     codechefUser,
     openlakeContributor,
-    LeetcodeUser
+    LeetcodeUser,
+
 )
 from leaderboard.serializers import (
     Cf_Serializer,
@@ -29,16 +30,21 @@ from datetime import datetime
 import requests
 
 from django.http import JsonResponse
-# from leaderboard.celery import get_ranking
-# from .tasks import get_rankings
 
+import requests
+import urllib.parse
+    
+
+import re
 
 import logging
 logger = logging.getLogger(__name__)
 from django.http import JsonResponse
 
-MAX_DATE_TIMESTAMP = datetime.max.timestamp
+MAX_DATE_TIMESTAMP = datetime.max.timestamp()
 
+from django.db import connection
+from django.db.utils import OperationalError
 
 
 
@@ -272,66 +278,51 @@ class LeetcodeLeaderboard(
         return Response(
             LT_Serializer(lt_user).data, status=status.HTTP_201_CREATED
         )
+
+
+def get_table_data(column):
+    try:
+        with connection.cursor() as cursor:
+        
+            cursor.execute("SELECT usernames, {column_name} FROM ccpsleetcoderanking".format(column_name=column))
+            usernames = cursor.fetchall()
+            
+            return usernames
+    except OperationalError as e:
+        
+        print(f"Error: {e}")
+
+
+def LeetcodeCCPSAPIView(request):
+    
+    
+    contest = request.GET.get('contest')
+    input_string = contest
+    
+    numbers = re.findall(r'\d+', input_string)
+
+    if contest[0] =='W' or 'w':
+        formatted_string = f"weekly{numbers[0]}" if numbers else ""
+        
+    else:
+        formatted_string = f"biweekly{numbers[0]}" if numbers else ""
+
+
+    data = get_table_data(formatted_string)
     
 
-def get_ranking(contest, usernames):
-    API_URL_FMT = 'https://leetcode.com/contest/api/ranking/{}/?pagination={}&region=global'
-    page = 1
-    total_rank = []
-    retry_cnt = 0
+    rankings = []
+    for username in data:
+        
+        if username[1] == 0:
+            ranking =None
+        else:
+            ranking = username[1]
+        rankings.append({
+            'username': username[0],
+            'ranking': ranking
+        })
+    sorted_rankings = sorted(rankings, key=lambda x: (x['ranking'] is None, x['ranking']))
+
     
-    while retry_cnt<10:
-        try:
-            logger.info(API_URL_FMT.format(contest, page))
-            url = API_URL_FMT.format(contest, page)
-            if page == 100 :
-                break
-            resp = requests.get(url).json()
-            page_rank = resp['total_rank']
-            if len(page_rank) == 0:
-                break
-            total_rank.extend(page_rank)
-            print(f'Retrieved ranking from page {page}. {len(total_rank)} retrieved.')
-            logger.info(f'Retrieved ranking from page {page}. {len(total_rank)} retrieved.')
-            page += 1
-            retry_cnt = 0
-        except:
-            print(f'Failed to retrieve data of page {page}...retry...{retry_cnt}')
-            retry_cnt += 1
-
-    # Discard and transform fields
-    for rank in total_rank:
-        rank.pop('contest_id', None)
-        rank.pop('user_slug', None)
-        rank.pop('country_code', None)
-        rank.pop('global_ranking', None)
-        finish_timestamp = rank.pop('finish_time', None)
-        if finish_timestamp:
-            rank['finish_time'] = datetime.fromtimestamp(int(finish_timestamp)).isoformat()
-
-    # Filter rankings based on usernames
-    filtered_rankings = [rank for rank in total_rank if rank['username'] in usernames]
-    filtered_rankings.sort(key=lambda obj: obj["rank"])
-    print(filtered_rankings)
-    return filtered_rankings
-
-
-
-# class ContestRankingsAPIView(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
-#     queryset = codeforcesUser.objects.all()
-#     def get(self, request):
-#         contest = request.GET.get('contest')
-#         usernames = request.GET.getlist('usernames[]')
-
-#         task = get_ranking.delay(contest, usernames)
-
-#         return Response({'task_id': task.id})
-
-def ContestRankingsAPIView(request):
-        if request.method=="GET":
-            contest = request.GET.get('contest')
-            usernames = request.GET.getlist('usernames[]')
-            logger.error(contest)
-            task = get_ranking(contest, usernames)
-
-        return JsonResponse(task, safe=False)
+    return JsonResponse(list(sorted_rankings), safe=False)
