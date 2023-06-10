@@ -244,9 +244,9 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(minute=f"*/{OL_INTV}"),
     },
     # Run the `tasks.add` task every minute.
-    'add': {
-        'task': 'tasks.add',
-        'schedule': crontab(minute='*'),
-    },
+#     'add': {
+#         'task': 'tasks.add',
+#         'schedule': crontab(minute='*'),
+#     },
 
 }
