@@ -3,6 +3,9 @@ from datetime import datetime, timezone, timedelta
 from django.contrib.auth.models import User
 from datetime import datetime
 
+from django.contrib.postgres.fields import ArrayField
+
+
 class githubUser(models.Model):
     username = models.CharField(max_length=64, unique=True)
     contributions = models.PositiveIntegerField(default=0)
@@ -49,7 +52,7 @@ class codeforcesUser(models.Model):
     max_rating = models.PositiveIntegerField(default=0)
     rating = models.PositiveIntegerField(default=0)
     last_activity = models.BigIntegerField(
-        default=datetime.max
+        default=datetime.max.timestamp()
     )
     last_updated = models.DateTimeField(auto_now=True)
     avatar = models.CharField(max_length=256, default="")
@@ -159,3 +162,4 @@ class CodechefFriends(models.Model):
 class OpenlakeFriends(models.Model):
     user =models.ForeignKey(User,on_delete=models.CASCADE,null=True)
     olFriend_uname=models.CharField(max_length=64)
+
