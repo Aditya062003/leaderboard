@@ -1,5 +1,5 @@
 const Celery = require('celery');
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379/0';
+const redisUrl = "redis-18982.c80.us-east-1-2.ec2.cloud.redislabs.com:18982";
 const app = new Celery(redisUrl);
 
 app.task('leaderboard.worker', async () => {
