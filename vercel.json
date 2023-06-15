@@ -4,16 +4,33 @@
     {
       "src": "leaderboard/wsgi.py",
       "use": "@vercel/python"
+    },
+    {
+      "src": "celery-worker.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "celery-beat.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
       "dest": "leaderboard/wsgi.py"
+    },
+    {
+      "src": "/celery/worker",
+      "dest": "/celery-worker.js"
+    },
+    {
+      "src": "/celery/beat",
+      "dest": "/celery-beat.js"
     }
   ],
   "env": {
     "CELERY_BROKER_URL": "redis-18982.c80.us-east-1-2.ec2.cloud.redislabs.com:18982",
-    "CELERY_RESULT_BACKEND": "redis-18982.c80.us-east-1-2.ec2.cloud.redislabs.com:18982"
+    "CELERY_RESULT_BACKEND": "redis-18982.c80.us-east-1-2.ec2.cloud.redislabs.com:18982",
+    "CELERY_LOGLEVEL": "info"
   }
 }
